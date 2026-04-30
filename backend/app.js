@@ -11,8 +11,7 @@ const { errorHandler } = require('./middlewares/error.middleware');
 
 const app = express();
 
-// ─── Trust proxy (obligatoire derrière Docker/Nginx/Railway) ─────────────────
-app.set('trust proxy', 1);
+
 
 // ─── Security ────────────────────────────────────────────────────────────────
 app.use(helmet({
