@@ -15,6 +15,9 @@ async function bootstrap() {
   // 1. Connect to MongoDB
   await connectDB();
 
+  // ─── Trust proxy (obligatoire derrière Docker/Nginx/Railway) ─────────────────
+app.set('trust proxy', 1);
+  
   // 2. Create HTTP server
   const server = http.createServer(app);
 
