@@ -1,0 +1,61 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "AnonChat",
+
+  "welcomeBack": "Welcome back!",
+  "loginSubtitle": "Log in to access your space.",
+  "username": "Username",
+  "password": "Password",
+  "login": "Log in",
+  "noAccount": "No account? Sign up",
+  "createAccount": "Create account",
+  "confirmPassword": "Confirm password",
+  "alreadyAccount": "Already have an account? Log in",
+  "fieldRequired": "This field is required",
+  "min3chars": "Minimum 3 characters",
+  "min6chars": "Minimum 6 characters",
+  "invalidChars": "Invalid characters (letters, numbers, _ . - only)",
+  "passwordMismatch": "Passwords do not match",
+
+  "helloUser": "Hello, {username} 👋",
+  "@helloUser": {
+    "placeholders": {
+      "username": { "type": "String" }
+    }
+  },
+  "homeSubtitle": "Share your link and receive anonymous messages.",
+  "yourLink": "YOUR LINK",
+  "shareLink": "Share my link",
+  "viewConversations": "My conversations",
+  "linkCopied": "Link copied!",
+  "shareMessage": "Send me an anonymous message 🔒",
+  "anonymityInfo": "Visitors stay anonymous to you. You cannot see their identity.",
+
+  "conversations": "Conversations",
+  "noConversations": "No conversations yet.",
+  "noConversationsHint": "Share your link to receive messages.",
+  "refresh": "Refresh",
+  "retry": "Retry",
+
+  "online": "Online",
+  "anonymous": "Anonymous",
+  "typing": "Typing...",
+  "messagePlaceholder": "Message...",
+  "noMessages": "No messages yet",
+  "noMessagesHint": "Be the first to write!",
+
+  "settings": "Settings",
+  "appearance": "Appearance",
+  "darkMode": "Dark mode",
+  "language": "Language",
+  "account": "Account",
+  "myChatLink": "My chat link",
+  "session": "Session",
+  "logout": "Log out",
+  "logoutConfirmTitle": "Log out?",
+  "logoutConfirmBody": "You will be redirected to the login page.",
+  "cancel": "Cancel",
+  "activeAccount": "Active account",
+  "version": "AnonChat v1.0.0"
+}

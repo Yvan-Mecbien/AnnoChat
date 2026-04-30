@@ -1,0 +1,171 @@
+const { Server } = require('socket.io');
+const { verifyAccess } = require('../utils/jwt');
+const User = require('../models/user.model');
+const Conversation = require('../models/conversation.model');
+const Message = require('../models/message.model');
+const logger = require('../utils/logger');
+
+let io;
+
+function initSocket(server) {
+  io = new Server(server, {
+    cors: {
+      origin: process.env.FRONTEND_URL || '*',
+      credentials: true,
+    },
+    pingTimeout: 60000,
+    pingInterval: 25000,
+  });
+
+  // ─── Auth middleware ────────────────────────────────────────────────────────
+  io.use(async (socket, next) => {
+    try {
+      const token = socket.handshake.auth?.token;
+      if (!token) return next(new Error('Authentication required'));
+
+      const decoded = verifyAccess(token);
+      const user = await User.findById(decoded.userId);
+      if (!user) return next(new Error('User not found'));
+
+      socket.user = user;
+      next();
+    } catch {
+      next(new Error('Invalid token'));
+    }
+  });
+
+  // ─── Connection ────────────────────────────────────────────────────────────
+  io.on('connection', async (socket) => {
+    const userId = socket.user._id.toString();
+    logger.debug(`Socket connected: ${userId}`);
+
+    // Mark user online
+    await User.findByIdAndUpdate(userId, { isOnline: true, lastSeen: new Date() });
+    socket.broadcast.emit('user:online', { userId });
+
+    // ── Join conversation room ──────────────────────────────────────────────
+    socket.on('room:join', async ({ conversationId }) => {
+      try {
+        const conv = await Conversation.findOne({
+          _id: conversationId,
+          $or: [{ linkOwner: userId }, { visitor: userId }],
+        });
+        if (!conv) return;
+
+        socket.join(conversationId);
+
+        // Mark delivered for messages in this room
+        await Message.updateMany(
+          { conversationId, senderId: { $ne: userId }, status: 'sent' },
+          { $set: { status: 'delivered' } }
+        );
+      } catch (err) {
+        logger.error('room:join error', err);
+      }
+    });
+
+    // ── Send message ───────────────────────────────────────────────────────
+    socket.on('message:send', async ({ conversationId, content }, callback) => {
+      try {
+        if (!content?.trim()) return callback?.({ error: 'Empty message' });
+
+        const conv = await Conversation.findOne({
+          _id: conversationId,
+          $or: [{ linkOwner: userId }, { visitor: userId }],
+        });
+        if (!conv) return callback?.({ error: 'Conversation not found' });
+
+        const msg = await Message.create({
+          conversationId,
+          senderId: userId,
+          content: content.trim(),
+        });
+
+        const otherId =
+          conv.linkOwner.toString() === userId
+            ? conv.visitor.toString()
+            : conv.linkOwner.toString();
+
+        await Conversation.findByIdAndUpdate(conversationId, {
+          lastMessage: { content: msg.content, senderId: userId, timestamp: msg.createdAt },
+          $inc: { [`unreadCount.${otherId}`]: 1 },
+        });
+
+        // Anonymity: sender display for owner
+        const isOwner = conv.linkOwner.toString() === userId;
+        const payload = {
+          _id: msg._id,
+          conversationId,
+          content: msg.content,
+          createdAt: msg.createdAt,
+          isMine: false,
+          // visitor's senderId is hidden from owner
+          senderDisplay: null,
+        };
+
+        // Emit to room with role-aware payload
+        const ownerPayload = {
+          ...payload,
+          isMine: isOwner,
+          senderDisplay: isOwner ? null : 'Anonyme',
+          senderId: isOwner ? userId : null,
+        };
+        const visitorPayload = {
+          ...payload,
+          isMine: !isOwner,
+          senderId: userId,
+        };
+
+        socket.to(conversationId).emit('message:new', isOwner ? ownerPayload : visitorPayload);
+        socket.emit('message:new', isOwner ? visitorPayload : ownerPayload);
+
+        callback?.({ ok: true, messageId: msg._id });
+      } catch (err) {
+        logger.error('message:send error', err);
+        callback?.({ error: 'Server error' });
+      }
+    });
+
+    // ── Typing indicators ──────────────────────────────────────────────────
+    socket.on('typing:start', ({ conversationId }) => {
+      socket.to(conversationId).emit('typing:start', { userId });
+    });
+
+    socket.on('typing:stop', ({ conversationId }) => {
+      socket.to(conversationId).emit('typing:stop', { userId });
+    });
+
+    // ── Message read ───────────────────────────────────────────────────────
+    socket.on('message:read', async ({ conversationId }) => {
+      try {
+        await Message.updateMany(
+          { conversationId, senderId: { $ne: userId }, status: { $ne: 'read' } },
+          { $set: { status: 'read' } }
+        );
+        await Conversation.findByIdAndUpdate(conversationId, {
+          $set: { [`unreadCount.${userId}`]: 0 },
+        });
+        socket.to(conversationId).emit('message:read', { conversationId, readBy: userId });
+      } catch (err) {
+        logger.error('message:read error', err);
+      }
+    });
+
+    // ── Disconnect ─────────────────────────────────────────────────────────
+    socket.on('disconnect', async () => {
+      logger.debug(`Socket disconnected: ${userId}`);
+      await User.findByIdAndUpdate(userId, { isOnline: false, lastSeen: new Date() });
+      socket.broadcast.emit('user:offline', { userId, lastSeen: new Date() });
+    });
+  });
+
+  logger.info('Socket.IO initialized');
+  return io;
+}
+
+function getIO() {
+  if (!io) throw new Error('Socket.IO not initialized');
+  return io;
+}
+
+module.exports = { initSocket, getIO };

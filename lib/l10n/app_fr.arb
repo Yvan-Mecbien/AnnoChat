@@ -1,0 +1,61 @@
+{
+  "@@locale": "fr",
+
+  "appTitle": "AnonChat",
+
+  "welcomeBack": "Bon retour !",
+  "loginSubtitle": "Connectez-vous pour accéder à votre espace.",
+  "username": "Pseudo",
+  "password": "Mot de passe",
+  "login": "Se connecter",
+  "noAccount": "Pas de compte ? S'inscrire",
+  "createAccount": "Créer un compte",
+  "confirmPassword": "Confirmer le mot de passe",
+  "alreadyAccount": "Déjà un compte ? Se connecter",
+  "fieldRequired": "Ce champ est requis",
+  "min3chars": "Minimum 3 caractères",
+  "min6chars": "Minimum 6 caractères",
+  "invalidChars": "Caractères invalides (lettres, chiffres, _ . - uniquement)",
+  "passwordMismatch": "Les mots de passe ne correspondent pas",
+
+  "helloUser": "Bonjour, {username} 👋",
+  "@helloUser": {
+    "placeholders": {
+      "username": { "type": "String" }
+    }
+  },
+  "homeSubtitle": "Partagez votre lien et recevez des messages anonymes.",
+  "yourLink": "VOTRE LIEN",
+  "shareLink": "Partager mon lien",
+  "viewConversations": "Mes conversations",
+  "linkCopied": "Lien copié !",
+  "shareMessage": "Envoie-moi un message anonyme 🔒",
+  "anonymityInfo": "Les visiteurs restent anonymes pour vous. Vous ne voyez pas leur identité.",
+
+  "conversations": "Conversations",
+  "noConversations": "Aucune conversation pour l'instant.",
+  "noConversationsHint": "Partagez votre lien pour recevoir des messages.",
+  "refresh": "Rafraîchir",
+  "retry": "Réessayer",
+
+  "online": "En ligne",
+  "anonymous": "Anonyme",
+  "typing": "En train d'écrire...",
+  "messagePlaceholder": "Message...",
+  "noMessages": "Aucun message pour l'instant",
+  "noMessagesHint": "Soyez le premier à écrire !",
+
+  "settings": "Paramètres",
+  "appearance": "Apparence",
+  "darkMode": "Mode sombre",
+  "language": "Langue",
+  "account": "Compte",
+  "myChatLink": "Mon lien de chat",
+  "session": "Session",
+  "logout": "Se déconnecter",
+  "logoutConfirmTitle": "Se déconnecter ?",
+  "logoutConfirmBody": "Vous serez redirigé vers la page de connexion.",
+  "cancel": "Annuler",
+  "activeAccount": "Compte actif",
+  "version": "AnonChat v1.0.0"
+}
