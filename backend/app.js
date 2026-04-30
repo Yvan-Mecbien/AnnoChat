@@ -11,32 +11,26 @@ const { errorHandler } = require('./middlewares/error.middleware');
 
 const app = express();
 
+// ─── Trust proxy (obligatoire derrière Docker/Nginx/Railway) ─────────────────
+app.set('trust proxy', 1);
+
 // ─── Security ────────────────────────────────────────────────────────────────
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
 
-// CORS – accepte localhost sur tous ports en dev, origines fixes en prod
 const corsOptions = {
   origin: (origin, callback) => {
-    // Pas d'origine = app mobile / Postman / curl → toujours OK
     if (!origin) return callback(null, true);
-
     const isDev = process.env.NODE_ENV !== 'production';
-
-    // En dev : autoriser tout localhost/127.0.0.1 quel que soit le port
     if (isDev && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
       return callback(null, true);
     }
-
-    // En prod : vérifier la liste blanche
     const allowed = (process.env.FRONTEND_URL || '')
       .split(',')
       .map((o) => o.trim())
       .filter(Boolean);
-
     if (allowed.includes(origin)) return callback(null, true);
-
     return callback(new Error(`CORS blocked: ${origin}`));
   },
   credentials: true,
