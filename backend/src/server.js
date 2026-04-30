@@ -9,8 +9,8 @@ const PORT = process.env.PORT || 5000;
 
 async function bootstrap() {
 
-    console.log(process.env.MONGODB_URI);
-  console.log(process.env.DATABASE_URL);
+  logger.info(process.env.MONGODB_URI);
+  logger.info(process.env.DATABASE_URL);
   
   // 1. Connect to MongoDB
   await connectDB();
