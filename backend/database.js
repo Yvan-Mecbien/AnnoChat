@@ -3,9 +3,11 @@ const logger = require('../utils/logger');
 
 const OPTS = {
   maxPoolSize: 20,
-  serverSelectionTimeoutMS: 30000,   // 30s au lieu de 5s
-  socketTimeoutMS: 0,                // Pas de timeout inactif
-  family: 4,                         // Forcer IPv4 (utile sur certains clouds)
+  serverSelectionTimeoutMS: 60000,
+  socketTimeoutMS: 0,
+  family: 4,
+  keepAlive: true,
+  keepAliveInitialDelay: 300000
 };
 
 async function connectDB() {
