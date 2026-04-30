@@ -23,8 +23,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ─── Indexes ─────────────────────────────────────────────────────────────────
-userSchema.index({ username: 1 });
 
 // ─── Virtuals ─────────────────────────────────────────────────────────────────
 // Link unique à l'utilisateur

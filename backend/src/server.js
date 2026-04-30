@@ -1,7 +1,7 @@
 require('dotenv').config();
 const http = require('http');
 const app = require('../app');
-const { connectDB } = require('../config/database');
+const { connectDB } = require('../config/database.js');
 const { initSocket } = require('../index');
 const logger = require('../utils/logger');
 

@@ -25,7 +25,7 @@ function makeTokens(userId) {
 // ─── Handlers ────────────────────────────────────────────────────────────────
 async function register(req, res, next) {
   try {
-    console.log(req.body);
+    
     const { error, value } = registerSchema.validate(req.body);
     if (error) return res.status(400).json({ error: error.details[0].message });
 

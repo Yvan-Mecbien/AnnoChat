@@ -4,6 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // ⚠️  Remplacez par votre URL backend
 const _baseUrl = 'http://127.0.0.1:5000/api'; // Change me
 
+//const _baseUrl = 'https://api-annonchat-backend-annochat-ccpinr-64afca-185-181-8-139.traefik.me/api'; // Change me
+
 class ApiService {
   ApiService._() {
     _dio.interceptors.add(
