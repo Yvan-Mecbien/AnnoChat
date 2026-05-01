@@ -8,7 +8,7 @@ const userRoutes = require('./routes/user.routes');
 const conversationRoutes = require('./routes/conversation.routes');
 const messageRoutes = require('./routes/message.routes');
 const { errorHandler } = require('./middlewares/error.middleware');
-
+const logger = require('./utils/logger');
 const app = express();
 
 
