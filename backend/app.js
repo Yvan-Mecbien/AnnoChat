@@ -22,24 +22,14 @@ app.use(helmet({
 }));
 
 const corsOptions = {
+  
+  
   origin: (origin, callback) => {
-    // Mobile apps, Postman, APK → pas d'origin → toujours OK
-    if (!origin) return callback(null, true);
 
-    // Toujours autoriser localhost (Flutter dev, web dev)
-    if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+    logger.info(origin);
       return callback(null, true);
-    }
-
-    // Origines autorisées en prod
-    const allowed = (process.env.FRONTEND_URL || '')
-      .split(',')
-      .map((o) => o.trim())
-      .filter(Boolean);
-
-    if (allowed.includes(origin)) return callback(null, true);
-
-    return callback(new Error(`CORS blocked: ${origin}`));
+  
+  
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
